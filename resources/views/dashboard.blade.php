@@ -12,7 +12,7 @@
                 <p class="text-muted mb-0 small">Sistem Pengelolaan Surat</p>
             </div>
             <div class="text-sm-end">
-                <span class="small text-muted d-block">Administrator</span>
+                <span class="small text-muted d-block">{{ ucfirst(Auth::user()->role ?? 'Admin') }}</span>
                 <span class="badge rounded-pill bg-primary-soft text-primary small">
                     SIFORA
                 </span>

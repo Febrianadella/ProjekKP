@@ -400,12 +400,71 @@
                     </button>
                     <h1 class="h5 mb-0">@yield('title', 'Dashboard')</h1>
                 </div>
-                <span class="text-muted small hide-mobile">Admin SIFORA</span>
+                <span class="text-muted small hide-mobile">{{ ucfirst(Auth::user()->role ?? 'Admin') }} SIFORA</span>
             </header>
 
             {{-- Content --}}
             <main class="flex-grow-1">
                 <div class="container-fluid py-3 py-md-4">
+
+                    {{-- Flash Messages --}}
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                            role="alert">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>{{ session('success') }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                            role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>{{ session('error') }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('warning'))
+                        <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                            role="alert">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <div>{{ session('warning') }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('info'))
+                        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                            role="alert">
+                            <i class="bi bi-info-circle-fill"></i>
+                            <div>{{ session('info') }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    {{-- Validation Errors --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <strong>Terjadi Kesalahan:</strong>
+                            </div>
+                            <ul class="mb-0 ps-4">
+                                @foreach ($errors->all() as $error)
+                                    <li class="small">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     @yield('content')
                 </div>
             </main>
