@@ -6,17 +6,9 @@
     <div class="dashboard-wrapper">
 
         {{-- HEADER --}}
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2 mb-4">
-            <div>
-                <h2 class="fw-semibold mb-1 fs-4">Dashboard</h2>
-                <p class="text-muted mb-0 small">Sistem Pengelolaan Surat</p>
-            </div>
-            <div class="text-sm-end">
-                <span class="small text-muted d-block">{{ ucfirst(Auth::user()->role ?? 'Admin') }}</span>
-                <span class="badge rounded-pill bg-primary-soft text-primary small">
-                    SIFORA
-                </span>
-            </div>
+        <div class="mb-4">
+            <h2 class="fw-semibold mb-1 fs-4">Dashboard</h2>
+            <p class="text-muted mb-0 small">Sistem Pengelolaan Surat</p>
         </div>
 
         {{-- BARIS ATAS: 3 CARD PERIHAL, LEBAR SAMA (BESAR) --}}

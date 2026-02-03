@@ -393,14 +393,11 @@
 
             {{-- Topbar --}}
             <header class="bg-white border-bottom px-3 px-md-4 py-2 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-2">
-                    {{-- Mobile menu button --}}
-                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <h1 class="h5 mb-0">@yield('title', 'Dashboard')</h1>
-                </div>
-                <span class="text-muted small hide-mobile">{{ ucfirst(Auth::user()->role ?? 'Admin') }} SIFORA</span>
+                {{-- Mobile menu button --}}
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="text-muted small ms-auto">{{ ucfirst(Auth::user()->role ?? 'Admin') }} SIFORA</span>
             </header>
 
             {{-- Content --}}

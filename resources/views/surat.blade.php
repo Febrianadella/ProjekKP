@@ -6,18 +6,15 @@
     <div class="dashboard-wrapper">
 
         {{-- HEADER + SEARCH --}}
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
             <div>
-                <h2 class="fw-semibold mb-1 fs-4 fs-md-3">Manajemen Surat</h2>
+                <h2 class="fw-semibold mb-1 fs-4">Manajemen Surat</h2>
                 <p class="text-muted small mb-0">Kelola surat masuk dan surat keluar</p>
             </div>
 
-            <div
-                class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 gap-sm-3 w-100 w-md-auto">
+            <div class="d-flex align-items-center gap-2">
                 {{-- FORM PENCARIAN --}}
-                <form method="GET" action="{{ route('surat') }}"
-                    class="d-flex align-items-center flex-grow-1 flex-sm-grow-0">
+                <form method="GET" action="{{ route('surat') }}" class="d-flex align-items-center">
                     <input type="text" name="q" class="form-control me-2" style="min-width: 200px; max-width: 280px;"
                         placeholder="Cari surat..." value="{{ request('q') }}">
                     <button type="submit" class="btn btn-outline-primary me-1">
@@ -63,8 +60,9 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Nomor Surat</label>
-                                <input type="text" name="no_surat" id="inputNoSuratMasuk" class="form-control"
-                                    placeholder="Contoh: SM/004/2025">
+                                <input type="text" id="inputNoSuratMasuk" class="form-control bg-light"
+                                    value="(Akan digenerate)" readonly disabled>
+                                <small class="text-muted" id="noSuratHintMasuk">Nomor surat akan digenerate otomatis</small>
                             </div>
 
                             <div class="mb-3">
@@ -134,8 +132,10 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Nomor Surat</label>
-                                <input type="text" name="no_surat" id="inputNoSuratKeluar" class="form-control"
-                                    placeholder="Contoh: SK/003/2025">
+                                <input type="text" id="inputNoSuratKeluar" class="form-control bg-light"
+                                    value="(Akan digenerate)" readonly disabled>
+                                <small class="text-muted" id="noSuratHintKeluar">Nomor surat akan digenerate
+                                    otomatis</small>
                             </div>
 
                             <div class="mb-3">
@@ -186,10 +186,7 @@
             </div>
         </div>
 
-        {{-- NOTIFIKASI --}}
-        @if (session('success'))
-            <div class="alert alert-success small">{{ session('success') }}</div>
-        @endif
+
 
         {{-- LIST SURAT --}}
         @forelse($surat as $item)
@@ -414,7 +411,8 @@
                 var btnSubmit = document.getElementById('btnSubmitSuratKeluar');
 
                 // Reset fields first
-                document.getElementById('inputNoSuratKeluar').value = '';
+                document.getElementById('inputNoSuratKeluar').value = '(Akan digenerate)';
+                document.getElementById('noSuratHintKeluar').textContent = 'Nomor surat akan digenerate otomatis';
                 document.getElementById('inputTanggalSuratKeluar').value = '';
                 document.getElementById('inputTujuanSuratKeluar').value = '';
                 document.getElementById('perihalSelectKeluar').value = '';
@@ -435,7 +433,9 @@
                     method.value = "PUT";
                     form.action = "{{ url('/surat-keluar') }}/" + refId;
 
-                    document.getElementById('inputNoSuratKeluar').value = noSurat || '';
+                    // Show actual no_surat for edit mode
+                    document.getElementById('inputNoSuratKeluar').value = noSurat || '-';
+                    document.getElementById('noSuratHintKeluar').textContent = '';
                     document.getElementById('inputTanggalSuratKeluar').value = tglSurat || '';
                     document.getElementById('inputTujuanSuratKeluar').value = tujuan || '';
 
@@ -500,7 +500,9 @@
                     method.value = "PUT";
                     form.action = "{{ url('/surat-masuk') }}/" + id; // route surat-masuk.update
 
-                    document.getElementById('inputNoSuratMasuk').value = noSurat || '';
+                    // Show actual no_surat
+                    document.getElementById('inputNoSuratMasuk').value = noSurat || '-';
+                    document.getElementById('noSuratHintMasuk').textContent = '';
                     document.getElementById('inputTanggalSuratMasuk').value = tglSurat || '';
                     document.getElementById('inputAsalSuratMasuk').value = asal || '';
 
@@ -519,6 +521,11 @@
                     btnSubmit.textContent = 'Simpan';
                     method.value = "POST";
                     form.action = "{{ route('surat-masuk.store') }}";
+
+                    // Reset no_surat to placeholder
+                    document.getElementById('inputNoSuratMasuk').value = '(Akan digenerate)';
+                    document.getElementById('noSuratHintMasuk').textContent =
+                        'Nomor surat akan digenerate otomatis';
                 }
             });
 

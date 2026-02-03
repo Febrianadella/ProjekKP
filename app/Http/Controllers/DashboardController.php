@@ -37,10 +37,20 @@ class DashboardController extends Controller
             ->count();
 
         // Surat masuk bulan ini (berdasarkan created_at)
-        $suratBulanIni = DB::table('surat_masuk')
+        $masukBulanIniCount = DB::table('surat_masuk')
             ->whereYear('created_at', $tahunIni)
             ->whereMonth('created_at', $bulanIni)
             ->count();
+
+        // Surat keluar (balasan) bulan ini
+        $keluarBulanIniCount = DB::table('surat_masuk')
+            ->whereYear('created_at', $tahunIni)
+            ->whereMonth('created_at', $bulanIni)
+            ->whereNotNull('file_balasan')
+            ->count();
+
+        // Total surat bulan ini (masuk + keluar)
+        $suratBulanIni = $masukBulanIniCount + $keluarBulanIniCount;
 
         // --- Persentase dibanding bulan lalu ---
 

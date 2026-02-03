@@ -54,7 +54,6 @@ class SuratController extends Controller
     public function storeMasuk(Request $request)
     {
         $data = $request->validate([
-            'no_surat'        => 'nullable|string|max:255',
             'tanggal_surat'   => 'required|date',
             'asal_surat'      => 'required|string|max:255',
             'perihal'         => 'required|string',
@@ -72,14 +71,18 @@ class SuratController extends Controller
                 ->store('surat-masuk', 'public');
         }
 
-        SuratMasuk::create([
-            'no_surat'      => $data['no_surat'] ?? null,
+        // Create surat first to get ID
+        $surat = SuratMasuk::create([
             'tanggal_surat' => $data['tanggal_surat'],
             'asal_surat'    => $data['asal_surat'],
             'perihal'       => $perihalFinal,
             'file_surat'    => $data['file_surat'] ?? null,
             'status'        => 'Belum Dibalas',
         ]);
+
+        // Auto-generate no_surat: SM/XXX/YYYY
+        $noSurat = 'SM/' . str_pad($surat->id, 3, '0', STR_PAD_LEFT) . '/' . date('Y');
+        $surat->update(['no_surat' => $noSurat]);
 
         return redirect()->route('surat')
             ->with('success', 'Surat masuk berhasil ditambahkan.');
