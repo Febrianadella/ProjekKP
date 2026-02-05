@@ -36,7 +36,7 @@ class SuratMasukController extends Controller
             'perihal' => 'required|string|max:500',
             'perihal_lainnya' => 'nullable|string|max:500',
             'tanggal_surat' => 'required|date',
-            'file_surat' => 'required|file|mimes:pdf|max:5120', // 5MB
+            'file_surat' => 'required|file|mimes:pdf,docx|max:5120', // 5MB
         ]);
 
         // Handle perihal "lainnya"
@@ -44,7 +44,7 @@ class SuratMasukController extends Controller
             ? ($data['perihal_lainnya'] ?? '') 
             : $data['perihal'];
 
-        // Upload file PDF
+        // Upload file PDF/DOCX
         if ($request->hasFile('file_surat')) {
             $data['file_surat'] = $request->file('file_surat')
                 ->store('surat-masuk', 'public');
@@ -100,7 +100,7 @@ class SuratMasukController extends Controller
             'perihal' => 'required|string|max:500',
             'perihal_lainnya' => 'nullable|string|max:500',
             'tanggal_surat' => 'required|date',
-            'file_surat' => 'nullable|file|mimes:pdf|max:5120',
+            'file_surat' => 'nullable|file|mimes:pdf,docx|max:5120',
         ]);
 
         // Handle perihal "lainnya"
@@ -152,7 +152,7 @@ class SuratMasukController extends Controller
     }
 
     /**
-     * Download file surat masuk PDF.
+     * Download file surat masuk.
      */
     public function download(SuratMasuk $suratMasuk)
     {

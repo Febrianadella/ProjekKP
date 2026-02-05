@@ -7,12 +7,12 @@
 
         {{-- HEADER --}}
         <div class="mb-4">
-            <h2 class="fw-semibold mb-1 fs-4">Dashboard</h2>
-            <p class="text-muted mb-0 small">Sistem Pengelolaan Surat</p>
+            <h2 class="mb-1 fw-semibold fs-4">Dashboard</h2>
+            <p class="mb-0 text-muted small">Sistem Pengelolaan Surat</p>
         </div>
 
         {{-- BARIS ATAS: 3 CARD PERIHAL, LEBAR SAMA (BESAR) --}}
-        <div class="row row-cols-1 row-cols-lg-3 g-3 mb-3">
+        <div class="mb-3 row row-cols-1 row-cols-lg-3 g-3">
             {{-- Surat perihal PKL --}}
             <div class="col">
                 <div class="stat-card stat-card-lg">
@@ -20,7 +20,8 @@
                         <i class="bi bi-mortarboard"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Perihal PKL</p>
+                        <p class="mb-0 fw-bold stat-label small text-uppercase text-muted">Surat Perihal PKL &amp; Penelitian
+                        </p>
                         <h4 class="mb-0">{{ $totalPKL }}</h4>
                         <span class="stat-sub text-muted extra-small">
                             Total surat dengan perihal PKL
@@ -36,7 +37,7 @@
                         <i class="bi bi-geo-alt"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Perihal Kunjungan</p>
+                        <p class="mb-0 fw-bold stat-label small text-uppercase text-muted">Surat Perihal Kunjungan</p>
                         <h4 class="mb-0">{{ $totalKunjungan }}</h4>
                         <span class="stat-sub text-muted extra-small">
                             Total surat dengan perihal Kunjungan
@@ -52,7 +53,7 @@
                         <i class="bi bi-three-dots"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Perihal Lainnya</p>
+                        <p class="mb-0 fw-bold stat-label small text-uppercase text-muted">Surat Perihal Lainnya</p>
                         <h4 class="mb-0">{{ $totalLainnya }}</h4>
                         <span class="stat-sub text-muted extra-small">
                             Total surat dengan perihal lainnya
@@ -63,7 +64,7 @@
         </div>
 
         {{-- BARIS TENGAH: 4 CARD (KECIL) --}}
-        <div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+        <div class="mb-4 row row-cols-1 row-cols-md-4 g-3">
             {{-- Surat bulan ini --}}
             <div class="col">
                 <div class="stat-card stat-card-sm">
@@ -71,7 +72,7 @@
                         <i class="bi bi-calendar-event"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Bulan Ini</p>
+                        <p class="mb-0 stat-label small text-uppercase text-muted">Surat Bulan Ini</p>
                         <h5 class="mb-0" id="surat-bulan-ini">{{ $suratBulanIni }}</h5>
                         <span class="stat-sub text-primary extra-small">
                             {{ now()->translatedFormat('F Y') }}
@@ -87,7 +88,7 @@
                         <i class="bi bi-inbox"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Masuk</p>
+                        <p class="mb-0 stat-label small text-uppercase text-muted">Surat Masuk</p>
                         <h5 class="mb-0" id="total-masuk">{{ $totalMasuk }}</h5>
                         {{-- deskripsi dihapus --}}
                     </div>
@@ -101,7 +102,7 @@
                         <i class="bi bi-send"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Surat Keluar</p>
+                        <p class="mb-0 stat-label small text-uppercase text-muted">Surat Keluar</p>
                         <h5 class="mb-0" id="total-keluar">{{ $totalKeluar }}</h5>
                         {{-- deskripsi dihapus --}}
                     </div>
@@ -115,7 +116,7 @@
                         <i class="bi bi-clock-history"></i>
                     </div>
                     <div>
-                        <p class="stat-label mb-0 small text-uppercase text-muted">Belum Dibalas</p>
+                        <p class="mb-0 stat-label small text-uppercase text-muted">Belum Dibalas</p>
                         <h5 class="mb-0" id="belum-dibalas">{{ $belumDibalas }}</h5>
                         <span class="badge rounded-pill bg-danger-subtle text-danger extra-small">
                             Perlu tindak lanjut
@@ -126,15 +127,15 @@
         </div>
 
         {{-- SURAT MASUK TERBARU --}}
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="border-0 shadow-sm card rounded-4">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Surat Masuk Terbaru</h5>
                     <a href="{{ route('surat') }}" class="small text-primary">Lihat Semua</a>
                 </div>
 
                 @forelse ($suratTerbaru as $surat)
-                    <div class="latest-item d-flex align-items-center gap-3 mb-3 p-3 rounded-3">
+                    <div class="gap-3 p-3 mb-3 latest-item d-flex align-items-center rounded-3">
                         <div
                             class="latest-icon bg-primary-soft text-primary d-flex align-items-center justify-content-center rounded-3">
                             <i class="bi bi-envelope"></i>
@@ -162,7 +163,7 @@
                         </span>
                     </div>
                 @empty
-                    <p class="text-muted small mb-0">Belum ada data surat.</p>
+                    <p class="mb-0 text-muted small">Belum ada data surat.</p>
                 @endforelse
             </div>
         </div>

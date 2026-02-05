@@ -122,8 +122,8 @@
 <body>
     {{-- HEADER --}}
     <div class="header">
-        <h1>Balai Besar Perikanan Budidaya Laut Lampung</h1>
-        <h2>LAPORAN SURAT MASUK</h2>
+        <h1>Pelayanan Publik BBPBL Lampung</h1>
+        <h2>LAPORAN SURAT MASUK DAN KELUAR</h2>
         <p><strong>Lampung</strong></p>
         <p>Tanggal Cetak: {{ now()->translatedFormat('d F Y H:i') }}</p>
     </div>
@@ -175,10 +175,21 @@
                     </td>
                     <td style="font-size: 9px;">
                         <div style="margin-bottom: 2px;">
-                            <strong>Masuk:</strong> {{ basename($row->file_surat ?? '-') }}
+                            <strong>Masuk:</strong>
+                            @if ($row->file_surat)
+                                <a href="{{ asset('storage/' . $row->file_surat) }}">{{ basename($row->file_surat) }}</a>
+                            @else
+                                -
+                            @endif
                         </div>
                         <div>
-                            <strong>Keluar:</strong> {{ basename($row->file_balasan ?? '-') }}
+                            <strong>Keluar:</strong>
+                            @if ($row->file_balasan)
+                                <a
+                                    href="{{ asset('storage/' . $row->file_balasan) }}">{{ basename($row->file_balasan) }}</a>
+                            @else
+                                -
+                            @endif
                         </div>
                     </td>
                 </tr>

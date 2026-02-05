@@ -261,6 +261,46 @@
                 display: block;
             }
         }
+
+        /* ====== LAPORAN + SURAT MOBILE IMPROVEMENTS ====== */
+
+        .file-btn {
+            width: 28px;
+            height: 28px;
+        }
+
+        @media (max-width: 575.98px) {
+            .laporan-card .card-body {
+                padding: 12px 14px;
+            }
+
+            .file-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+            .surat-header {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            .surat-actions,
+            .balasan-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .surat-meta {
+                flex-wrap: wrap;
+                gap: 6px 12px !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .w-md-auto {
+                width: auto !important;
+            }
+        }
     </style>
 </head>
 

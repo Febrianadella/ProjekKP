@@ -67,7 +67,7 @@ class SuratKeluarController extends Controller
             'tujuan_surat'    => ['required', 'string', 'max:255'],
             'perihal'         => ['required', 'string'],
             'perihal_lainnya' => ['nullable', 'string'],
-            'file_balasan'    => ['nullable', 'file', 'mimes:pdf', 'max:2048'],
+            'file_balasan'    => ['nullable', 'file', 'mimes:pdf,docx', 'max:2048'],
         ]);
 
         // Jika perihal adalah 'lainnya', gunakan perihal_lainnya
@@ -127,7 +127,7 @@ class SuratKeluarController extends Controller
     }
 
     /**
-     * Download file balasan PDF.
+     * Download file balasan.
      */
     public function download(SuratMasuk $surat_keluar)
     {

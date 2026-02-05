@@ -58,7 +58,7 @@ class SuratController extends Controller
             'asal_surat'      => 'required|string|max:255',
             'perihal'         => 'required|string',
             'perihal_lainnya' => 'nullable|string|max:500',
-            'file_surat'      => 'nullable|file|mimes:pdf|max:2048',
+            'file_surat'      => 'nullable|file|mimes:pdf,docx|max:2048',
         ]);
 
         // Handle perihal "lainnya"
@@ -114,7 +114,7 @@ class SuratController extends Controller
             'asal_surat'      => 'required|string|max:255',
             'perihal'         => 'required|string',
             'perihal_lainnya' => 'nullable|string|max:500',
-            'file_surat'      => 'nullable|file|mimes:pdf|max:2048',
+            'file_surat'      => 'nullable|file|mimes:pdf,docx|max:2048',
         ]);
 
         // Handle perihal "lainnya"
@@ -171,7 +171,7 @@ class SuratController extends Controller
             'tujuan_surat'    => ['required', 'string', 'max:255'],
             'perihal'         => ['required', 'string'],
             'perihal_lainnya' => ['nullable', 'string'],
-            'file_balasan'    => ['required', 'file', 'mimes:pdf', 'max:2048'],
+            'file_balasan'    => ['required', 'file', 'mimes:pdf,docx', 'max:2048'],
         ]);
 
         // Jika perihal adalah 'lainnya', gunakan perihal_lainnya
@@ -225,7 +225,7 @@ class SuratController extends Controller
             'tanggal_surat' => ['required', 'date'],
             'tujuan_surat'  => ['required', 'string', 'max:255'],
             'perihal'       => ['required', 'string'],
-            'file_balasan'  => ['nullable', 'file', 'mimes:pdf', 'max:2048'],
+            'file_balasan'  => ['nullable', 'file', 'mimes:pdf,docx', 'max:2048'],
         ]);
 
         $filePath = $suratMasuk->file_balasan;

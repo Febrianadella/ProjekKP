@@ -72,10 +72,15 @@ class LaporanSuratExport implements FromCollection, WithHeadings, WithMapping, S
 
     public function map($surat): array
     {
-        $status = !empty($surat->file_balasan) ? '✅ Sudah Dibalas' : '❌ Belum Dibalas';
-        $tanggalKeluar = $surat->tanggal_balasan 
-            ? Carbon::parse($surat->tanggal_balasan)->format('d/m/Y H:i') 
+        $status = !empty($surat->file_balasan) ? '? Sudah Dibalas' : '? Belum Dibalas';
+        $tanggalKeluar = $surat->tanggal_balasan
+            ? Carbon::parse($surat->tanggal_balasan)->format('d/m/Y H:i')
             : '-';
+
+        $fileSuratLabel = $surat->file_surat ? basename($surat->file_surat) : '-';
+        $fileBalasanLabel = $surat->file_balasan ? basename($surat->file_balasan) : '-';
+        $fileSuratUrl = $surat->file_surat ? url('storage/' . $surat->file_surat) : null;
+        $fileBalasanUrl = $surat->file_balasan ? url('storage/' . $surat->file_balasan) : null;
 
         return [
             '', // No akan auto-generate
@@ -84,9 +89,16 @@ class LaporanSuratExport implements FromCollection, WithHeadings, WithMapping, S
             $surat->perihal ?? '',
             $tanggalKeluar,
             $status,
-            basename($surat->file_surat) ?? '-',
-            basename($surat->file_balasan) ?? '-'
+            $fileSuratUrl ? $this->buildHyperlink($fileSuratUrl, $fileSuratLabel) : $fileSuratLabel,
+            $fileBalasanUrl ? $this->buildHyperlink($fileBalasanUrl, $fileBalasanLabel) : $fileBalasanLabel
         ];
+    }
+
+    private function buildHyperlink(string $url, string $label): string
+    {
+        $safeUrl = str_replace('"', '""', $url);
+        $safeLabel = str_replace('"', '""', $label);
+        return '=HYPERLINK("' . $safeUrl . '","' . $safeLabel . '")';
     }
 
     public function styles(Worksheet $sheet)

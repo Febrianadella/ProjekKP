@@ -94,8 +94,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Upload File PDF</label>
-                                <input type="file" name="file_surat" class="form-control" accept="application/pdf">
+                                <label class="form-label">Upload File PDF/DOCX</label>
+                                <input type="file" name="file_surat" class="form-control" accept=".pdf,.docx">
                             </div>
 
                         </div>
@@ -168,8 +168,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Upload File PDF</label>
-                                <input type="file" name="file_balasan" class="form-control" accept="application/pdf">
+                                <label class="form-label">Upload File PDF/DOCX</label>
+                                <input type="file" name="file_balasan" class="form-control" accept=".pdf,.docx">
                             </div>
 
                         </div>
@@ -195,7 +195,7 @@
                 <div class="card-body p-0" style="background:#ffffff;">
 
                     {{-- BARIS ATAS: SURAT MASUK --}}
-                    <div class="d-flex align-items-center justify-content-between px-4 py-3 border-bottom"
+                    <div class="d-flex align-items-center justify-content-between px-4 py-3 border-bottom flex-wrap gap-2 surat-header"
                         style="background:#ffffff;">
                         <div class="d-flex align-items-center gap-3">
                             {{-- ICON KIRI --}}
@@ -216,7 +216,7 @@
 
                                 <p class="mb-0 fw-semibold small">{{ $item->perihal }}</p>
 
-                                <div class="text-muted extra-small mt-1 d-flex align-items-center gap-3">
+                                <div class="text-muted extra-small mt-1 d-flex align-items-center gap-3 surat-meta">
                                     <span>
                                         <i class="bi bi-building me-1"></i>
                                         {{ $item->asal_surat }}
@@ -230,7 +230,7 @@
                         </div>
 
                         {{-- AKSI KANAN SURAT MASUK --}}
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 surat-actions mt-2 mt-md-0">
                             @if ($item->file_surat)
                                 <a href="{{ route('surat-masuk.download', $item->id) }}"
                                     class="btn btn-light btn-sm rounded-circle" title="Download Surat">
@@ -268,7 +268,8 @@
                         @if ($item->file_balasan)
                             {{-- BALASAN SURAT KELUAR --}}
                             <div class="card border-0 mb-2" style="background:#fff7e6;">
-                                <div class="card-body py-3 px-3 d-flex justify-content-between align-items-start">
+                                <div
+                                    class="card-body py-3 px-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
                                     <div class="d-flex gap-3">
                                         <div class="surat-icon bg-warning-soft text-warning">
                                             <i class="bi bi-send-fill"></i>
@@ -285,7 +286,8 @@
                                             <p class="mb-0 fw-semibold small">
                                                 {{ $item->perihal_balasan ?? 'Balasan: ' . $item->perihal }}
                                             </p>
-                                            <div class="text-muted extra-small mt-1 d-flex align-items-center gap-3">
+                                            <div
+                                                class="text-muted extra-small mt-1 d-flex align-items-center gap-3 surat-meta">
                                                 <span>
                                                     <i class="bi bi-building me-1"></i>
                                                     {{ $item->tujuan_surat ?? $item->asal_surat }}
@@ -299,7 +301,7 @@
                                     </div>
 
                                     {{-- AKSI KANAN BALASAN --}}
-                                    <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-2 balasan-actions mt-2 mt-md-0">
                                         <a href="{{ route('surat-keluar.download', $item->id) }}"
                                             class="btn btn-light btn-sm rounded-circle" title="Download Balasan">
                                             <i class="bi bi-download"></i>
@@ -338,7 +340,7 @@
                                 <span>Sudah Dibalas</span>
                             </div>
                         @else
-                            <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                 <div class="d-flex align-items-center gap-1 small text-muted">
                                     <i class="bi bi-envelope-open fs-6"></i>
                                     <span>Belum Dibalas</span>

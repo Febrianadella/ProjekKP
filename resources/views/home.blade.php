@@ -120,23 +120,23 @@
         <div class="container hero-content">
             <div class="row justify-content-between">
                 <div class="col-lg-7">
-                    <div class="hero-badge mb-3 small">
+                    <div class="mb-3 hero-badge small">
                         Sistem Terpercaya &amp; Aman
                     </div>
-                    <h1 class="display-4 fw-bold mb-3">
+                    <h1 class="mb-3 display-4 fw-bold">
                         Kelola Surat Masuk &amp; Keluar<br>
                         dengan Mudah
                     </h1>
-                    <p class="lead mb-4">
-                        Sistem pengelolaan surat digital untuk Balai Besar Perikanan Budidaya
-                        Laut Lampung. Efisien, terorganisir, dan profesional.
+                    <p class="mb-4 lead">
+                        Sistem pengelolaan surat digital untuk Pelayanan Public BBPBL Lampung. Efisien, terorganisir,
+                        dan profesional.
                     </p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ route('register') }}" class="btn btn-primary btn-lg px-4"
+                    <div class="flex-wrap gap-2 d-flex">
+                        <a href="{{ route('register') }}" class="px-4 btn btn-primary btn-lg"
                             style="background-color:#173895ff;border-color:#1d4ed8;">
                             Daftar
                         </a>
-                        <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <a href="{{ route('login') }}" class="px-4 btn btn-outline-light btn-lg">
                             Masuk
                         </a>
                     </div>
@@ -148,9 +148,9 @@
     {{-- FITUR UNGGULAN --}}
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="fw-semibold mb-1">Fitur Unggulan</h2>
-                <p class="text-muted small mb-0">
+            <div class="mb-4 text-center">
+                <h2 class="mb-1 fw-semibold">Fitur Unggulan</h2>
+                <p class="mb-0 text-muted small">
                     Sistem yang dirancang khusus untuk memudahkan pengelolaan surat di
                     instansi pemerintahan.
                 </p>
@@ -163,7 +163,7 @@
                             <i class="bi bi-inbox"></i>
                         </div>
                         <h5 class="mb-1">Surat Masuk</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Kelola dan arsipkan surat masuk dengan sistem yang terorganisir.
                             Lacak status dan riwayat setiap surat dengan mudah.
                         </p>
@@ -175,7 +175,7 @@
                             <i class="bi bi-send"></i>
                         </div>
                         <h5 class="mb-1">Surat Keluar</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Buat dan kirim surat balasan dengan cepat. Sistem otomatis
                             menghubungkan surat masuk dengan balasannya.
                         </p>
@@ -187,7 +187,7 @@
                             <i class="bi bi-graph-up"></i>
                         </div>
                         <h5 class="mb-1">Laporan Detail</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Generate laporan lengkap dengan filter tanggal, status, dan
                             kategori. Ekspor ke PDF atau Excel dengan satu klik.
                         </p>
@@ -200,7 +200,7 @@
                             <i class="bi bi-people"></i>
                         </div>
                         <h5 class="mb-1">Role-Based Access</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Sistem akses berbasis peran untuk Admin dan Pimpinan. Setiap
                             role memiliki hak akses yang sesuai dengan tugasnya.
                         </p>
@@ -212,7 +212,7 @@
                             <i class="bi bi-file-earmark-pdf"></i>
                         </div>
                         <h5 class="mb-1">Download PDF</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Unduh setiap surat dalam format PDF untuk arsip atau keperluan
                             cetak. Kualitas dokumen terjaga dengan baik.
                         </p>
@@ -224,7 +224,7 @@
                             <i class="bi bi-speedometer2"></i>
                         </div>
                         <h5 class="mb-1">Dashboard Real-time</h5>
-                        <p class="text-muted small mb-0">
+                        <p class="mb-0 text-muted small">
                             Monitor statistik surat masuk dan keluar secara real-time
                             melalui dashboard yang informatif dan mudah dipahami.
                         </p>
@@ -237,39 +237,39 @@
     {{-- CARA KERJA SISTEM --}}
     <section class="py-5">
         <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="fw-semibold mb-1">Cara Kerja Sistem</h2>
-                <p class="text-muted small mb-0">
+            <div class="mb-4 text-center">
+                <h2 class="mb-1 fw-semibold">Cara Kerja Sistem</h2>
+                <p class="mb-0 text-muted small">
                     Proses pengelolaan surat yang sederhana dan efisien.
                 </p>
             </div>
 
-            <div class="row g-3 text-center">
+            <div class="text-center row g-3">
                 <div class="col-6 col-md-3">
-                    <div class="step-circle mb-2">1</div>
-                    <h6 class="fw-semibold mb-1">Daftar Akun</h6>
-                    <p class="text-muted extra-small mb-0">
+                    <div class="mb-2 step-circle">1</div>
+                    <h6 class="mb-1 fw-semibold">Daftar Akun</h6>
+                    <p class="mb-0 text-muted extra-small">
                         Buat akun baru dengan mengisi data yang diperlukan.
                     </p>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="step-circle mb-2">2</div>
-                    <h6 class="fw-semibold mb-1">Login Sistem</h6>
-                    <p class="text-muted extra-small mb-0">
+                    <div class="mb-2 step-circle">2</div>
+                    <h6 class="mb-1 fw-semibold">Login Sistem</h6>
+                    <p class="mb-0 text-muted extra-small">
                         Masuk ke dashboard sesuai dengan role Anda.
                     </p>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="step-circle mb-2">3</div>
-                    <h6 class="fw-semibold mb-1">Kelola Surat</h6>
-                    <p class="text-muted extra-small mb-0">
+                    <div class="mb-2 step-circle">3</div>
+                    <h6 class="mb-1 fw-semibold">Kelola Surat</h6>
+                    <p class="mb-0 text-muted extra-small">
                         Upload, edit, dan kelola surat masuk dan keluar.
                     </p>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="step-circle mb-2">4</div>
-                    <h6 class="fw-semibold mb-1">Generate Laporan</h6>
-                    <p class="text-muted extra-small mb-0">
+                    <div class="mb-2 step-circle">4</div>
+                    <h6 class="mb-1 fw-semibold">Generate Laporan</h6>
+                    <p class="mb-0 text-muted extra-small">
                         Buat laporan dan export data sesuai kebutuhan.
                     </p>
                 </div>
@@ -278,14 +278,14 @@
     </section>
 
     {{-- CTA --}}
-    <section class="py-5 text-white text-center" style="background-color:#1d4ed8;">
+    <section class="py-5 text-center text-white" style="background-color:#1d4ed8;">
         <div class="container">
-            <h2 class="fw-semibold mb-2">Siap Memulai Pengelolaan Surat Digital?</h2>
+            <h2 class="mb-2 fw-semibold">Siap Memulai Pengelolaan Surat Digital?</h2>
             <p class="mb-4 small">
                 Bergabunglah dengan sistem pengelolaan surat modern SIFORA.
                 Daftar sekarang dan rasakan kemudahan dalam mengelola surat instansi Anda.
             </p>
-            <a href="{{ route('register') }}" class="btn btn-light btn-lg px-4">
+            <a href="{{ route('register') }}" class="px-4 btn btn-light btn-lg">
                 Daftar Sekarang
             </a>
         </div>

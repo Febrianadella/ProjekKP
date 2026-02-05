@@ -114,4 +114,54 @@ class LaporanController extends Controller
 
         return $pdf->download('laporan-surat-' . now()->format('Y-m-d-H-i-s') . '.pdf');
     }
+
+    /**
+     * Preview filtered data to PDF (inline).
+     */
+    public function previewPdf(Request $request)
+    {
+        // Get all filters
+        $tanggalMulai = $request->input('tanggal_mulai');
+        $tanggalAkhir = $request->input('tanggal_akhir');
+        $perihal = $request->input('perihal');
+        $status = $request->input('status', 'semua');
+
+        // Same query logic as index method
+        $query = DB::table('surat_masuk as sm');
+
+        if ($tanggalMulai) {
+            $query->whereDate('sm.tanggal_surat', '>=', $tanggalMulai);
+        }
+        if ($tanggalAkhir) {
+            $query->whereDate('sm.tanggal_surat', '<=', $tanggalAkhir);
+        }
+        if ($perihal) {
+            $query->where('sm.perihal', 'like', "%{$perihal}%");
+        }
+        if ($status !== 'semua') {
+            if ($status === 'Sudah Dibalas') {
+                $query->whereNotNull('sm.file_balasan');
+            } else {
+                $query->whereNull('sm.file_balasan');
+            }
+        }
+
+        $surat = $query->orderByDesc('sm.tanggal_surat')->get();
+
+        $pdf = Pdf::loadView('laporan.pdf', compact(
+            'surat',
+            'tanggalMulai',
+            'tanggalAkhir',
+            'perihal',
+            'status'
+        ))
+        ->setPaper('a4', 'landscape')
+        ->setOptions([
+            'defaultFont' => 'Arial',
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true
+        ]);
+
+        return $pdf->stream('laporan-surat-' . now()->format('Y-m-d-H-i-s') . '.pdf');
+    }
 }

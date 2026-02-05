@@ -151,6 +151,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('index');
+        Route::get('/export/pdf/preview', [LaporanController::class, 'previewPdf'])->name('export.pdf.preview');
         Route::get('/export/pdf', [LaporanController::class, 'exportPdf'])->name('export.pdf');
         Route::get('/export/excel', [LaporanController::class, 'exportExcel'])->name('export.excel');
     });
