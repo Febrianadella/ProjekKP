@@ -131,7 +131,7 @@ class SuratKeluarController extends Controller
      */
     public function download(SuratMasuk $surat_keluar)
     {
-        $filePath = $this->resolvePublicFilePath($surat_keluar->file_balasan);
+        $filePath = $this->resolveFilePath($surat_keluar->file_balasan);
         if (!$filePath) {
             Log::warning('File balasan tidak ditemukan saat download.', [
                 'surat_masuk_id' => $surat_keluar->id,
@@ -148,7 +148,7 @@ class SuratKeluarController extends Controller
      */
     public function preview(SuratMasuk $surat_keluar)
     {
-        $filePath = $this->resolvePublicFilePath($surat_keluar->file_balasan);
+        $filePath = $this->resolveFilePath($surat_keluar->file_balasan);
         if (!$filePath) {
             Log::warning('File balasan tidak ditemukan saat preview.', [
                 'surat_masuk_id' => $surat_keluar->id,
@@ -164,7 +164,7 @@ class SuratKeluarController extends Controller
         );
     }
 
-    private function resolvePublicFilePath(?string $path): ?string
+    private function resolveFilePath(?string $path): ?string
     {
         if (!$path) {
             return null;
@@ -189,45 +189,5 @@ class SuratKeluarController extends Controller
     private function suratDisk(): string
     {
         return config('filesystems.surat_disk', 'public');
-    }
-
-    /**
-     * Preview file balasan (inline).
-     */
-    public function preview(SuratMasuk $surat_keluar)
-    {
-        if (!$surat_keluar->file_balasan) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        if (!Storage::disk('public')->exists($surat_keluar->file_balasan)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        return Storage::disk('public')->response(
-            $surat_keluar->file_balasan,
-            basename($surat_keluar->file_balasan),
-            ['Content-Disposition' => 'inline; filename="' . basename($surat_keluar->file_balasan) . '"']
-        );
-    }
-
-    /**
-     * Preview file balasan (inline).
-     */
-    public function preview(SuratMasuk $surat_keluar)
-    {
-        if (!$surat_keluar->file_balasan) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        if (!Storage::disk('public')->exists($surat_keluar->file_balasan)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        return Storage::disk('public')->response(
-            $surat_keluar->file_balasan,
-            basename($surat_keluar->file_balasan),
-            ['Content-Disposition' => 'inline; filename="' . basename($surat_keluar->file_balasan) . '"']
-        );
     }
 }

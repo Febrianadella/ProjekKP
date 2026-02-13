@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class SuratMasukController extends Controller
 {
@@ -156,7 +156,7 @@ class SuratMasukController extends Controller
      */
     public function download(SuratMasuk $suratMasuk)
     {
-        $filePath = $this->resolvePublicFilePath($suratMasuk->file_surat);
+        $filePath = $this->resolveFilePath($suratMasuk->file_surat);
         if (!$filePath) {
             Log::warning('File surat masuk tidak ditemukan saat download.', [
                 'surat_masuk_id' => $suratMasuk->id,
@@ -173,7 +173,7 @@ class SuratMasukController extends Controller
      */
     public function preview(SuratMasuk $suratMasuk)
     {
-        $filePath = $this->resolvePublicFilePath($suratMasuk->file_surat);
+        $filePath = $this->resolveFilePath($suratMasuk->file_surat);
         if (!$filePath) {
             Log::warning('File surat masuk tidak ditemukan saat preview.', [
                 'surat_masuk_id' => $suratMasuk->id,
@@ -189,7 +189,7 @@ class SuratMasukController extends Controller
         );
     }
 
-    private function resolvePublicFilePath(?string $path): ?string
+    private function resolveFilePath(?string $path): ?string
     {
         if (!$path) {
             return null;
@@ -214,45 +214,5 @@ class SuratMasukController extends Controller
     private function suratDisk(): string
     {
         return config('filesystems.surat_disk', 'public');
-    }
-
-    /**
-     * Preview file surat masuk (inline).
-     */
-    public function preview(SuratMasuk $suratMasuk)
-    {
-        if (!$suratMasuk->file_surat) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        if (!Storage::disk('public')->exists($suratMasuk->file_surat)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        return Storage::disk('public')->response(
-            $suratMasuk->file_surat,
-            basename($suratMasuk->file_surat),
-            ['Content-Disposition' => 'inline; filename="' . basename($suratMasuk->file_surat) . '"']
-        );
-    }
-
-    /**
-     * Preview file surat masuk (inline).
-     */
-    public function preview(SuratMasuk $suratMasuk)
-    {
-        if (!$suratMasuk->file_surat) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        if (!Storage::disk('public')->exists($suratMasuk->file_surat)) {
-            abort(404, 'File tidak ditemukan');
-        }
-
-        return Storage::disk('public')->response(
-            $suratMasuk->file_surat,
-            basename($suratMasuk->file_surat),
-            ['Content-Disposition' => 'inline; filename="' . basename($suratMasuk->file_surat) . '"']
-        );
     }
 }
