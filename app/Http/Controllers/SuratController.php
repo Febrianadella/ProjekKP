@@ -68,7 +68,7 @@ class SuratController extends Controller
 
         if ($request->hasFile('file_surat')) {
             $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', 'public');
+                ->store('surat-masuk', $this->suratDisk());
         }
 
         // Create surat first to get ID
@@ -125,11 +125,11 @@ class SuratController extends Controller
         if ($request->hasFile('file_surat')) {
             // hapus file lama kalau ada
             if ($surat->file_surat) {
-                Storage::disk('public')->delete($surat->file_surat);
+                Storage::disk($this->suratDisk())->delete($surat->file_surat);
             }
 
             $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', 'public');
+                ->store('surat-masuk', $this->suratDisk());
         } else {
             // Jika tidak ada upload baru, gunakan file lama
             $data['file_surat'] = $surat->file_surat;
@@ -182,7 +182,7 @@ class SuratController extends Controller
         $suratMasuk = SuratMasuk::findOrFail($data['surat_masuk_id']);
 
         $filePath = $request->file('file_balasan')
-            ->store('surat-keluar', 'public');
+            ->store('surat-keluar', $this->suratDisk());
 
         $noSurat = $data['no_surat']
             ?? 'SK/' . str_pad($suratMasuk->id, 3, '0', STR_PAD_LEFT) . '/' . date('Y');
@@ -232,10 +232,10 @@ class SuratController extends Controller
 
         if ($request->hasFile('file_balasan')) {
             if ($filePath) {
-                Storage::disk('public')->delete($filePath);
+                Storage::disk($this->suratDisk())->delete($filePath);
             }
             $filePath = $request->file('file_balasan')
-                ->store('surat-keluar', 'public');
+                ->store('surat-keluar', $this->suratDisk());
         }
 
         // Handle no_surat - jika kosong atau null, gunakan nilai lama atau auto-generate
@@ -262,7 +262,7 @@ class SuratController extends Controller
     public function destroyBalasan(SuratMasuk $surat)
     {
         if ($surat->file_balasan) {
-            Storage::disk('public')->delete($surat->file_balasan);
+            Storage::disk($this->suratDisk())->delete($surat->file_balasan);
         }
 
         $surat->update([
@@ -288,10 +288,10 @@ class SuratController extends Controller
         $surat = SuratMasuk::findOrFail($id);
 
         if ($surat->file_surat) {
-            Storage::disk('public')->delete($surat->file_surat);
+            Storage::disk($this->suratDisk())->delete($surat->file_surat);
         }
         if ($surat->file_balasan) {
-            Storage::disk('public')->delete($surat->file_balasan);
+            Storage::disk($this->suratDisk())->delete($surat->file_balasan);
         }
 
         $surat->delete();
@@ -299,5 +299,10 @@ class SuratController extends Controller
         return redirect()
             ->route('surat')
             ->with('success', 'Surat berhasil dihapus.');
+    }
+
+    private function suratDisk(): string
+    {
+        return config('filesystems.surat_disk', 'public');
     }
 }

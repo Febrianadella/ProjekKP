@@ -86,6 +86,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // DOWNLOAD FILE PDF SURAT MASUK (allow for all)
     Route::get('/surat-masuk/{suratMasuk}/download', [SuratMasukController::class, 'download'])
         ->name('surat-masuk.download');
+    Route::get('/surat-masuk/{suratMasuk}/preview', [SuratMasukController::class, 'preview'])
+        ->name('surat-masuk.preview');
 
     /*
     |--------------------------------------------------------------------------
@@ -114,6 +116,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // DOWNLOAD FILE PDF BALASAN (allow for all)
     Route::get('/surat-keluar/{surat_keluar}/download', [SuratKeluarController::class, 'download'])
         ->name('surat-keluar.download');
+    Route::get('/surat-keluar/{surat_keluar}/preview', [SuratKeluarController::class, 'preview'])
+        ->name('surat-keluar.preview');
 
     // HAPUS BALASAN (protect with middleware)
     Route::delete('/surat-keluar/{surat}/balasan', [SuratController::class, 'destroyBalasan'])

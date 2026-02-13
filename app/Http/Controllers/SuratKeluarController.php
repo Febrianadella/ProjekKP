@@ -80,9 +80,9 @@ class SuratKeluarController extends Controller
         if ($request->hasFile('file_balasan')) {
             // Hapus file lama
             if ($filePath) {
-                Storage::disk('public')->delete($filePath);
+                Storage::disk($this->suratDisk())->delete($filePath);
             }
-            $filePath = $request->file('file_balasan')->store('surat-keluar', 'public');
+            $filePath = $request->file('file_balasan')->store('surat-keluar', $this->suratDisk());
         }
 
         // Handle no_surat - jika kosong atau null, gunakan nilai lama atau auto-generate
@@ -110,7 +110,7 @@ class SuratKeluarController extends Controller
     {
         // Hapus file kalau ada
         if ($surat_keluar->file_balasan) {
-            Storage::disk('public')->delete($surat_keluar->file_balasan);
+            Storage::disk($this->suratDisk())->delete($surat_keluar->file_balasan);
         }
 
         $surat_keluar->update([
@@ -131,10 +131,83 @@ class SuratKeluarController extends Controller
      */
     public function download(SuratMasuk $surat_keluar)
     {
+        $filePath = $this->resolvePublicFilePath($surat_keluar->file_balasan);
+        if (!$filePath) {
+            Log::warning('File balasan tidak ditemukan saat download.', [
+                'surat_masuk_id' => $surat_keluar->id,
+                'stored_path' => $surat_keluar->file_balasan,
+            ]);
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk($this->suratDisk())->download($filePath, basename($filePath));
+    }
+
+    /**
+     * Preview file balasan (inline).
+     */
+    public function preview(SuratMasuk $surat_keluar)
+    {
+        $filePath = $this->resolvePublicFilePath($surat_keluar->file_balasan);
+        if (!$filePath) {
+            Log::warning('File balasan tidak ditemukan saat preview.', [
+                'surat_masuk_id' => $surat_keluar->id,
+                'stored_path' => $surat_keluar->file_balasan,
+            ]);
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk($this->suratDisk())->response(
+            $filePath,
+            basename($filePath),
+            ['Content-Disposition' => 'inline; filename="' . basename($filePath) . '"']
+        );
+    }
+
+    private function resolvePublicFilePath(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        $normalized = ltrim(str_replace('\\', '/', $path), '/');
+        $candidates = array_unique([
+            $normalized,
+            preg_replace('#^public/#', '', $normalized),
+            preg_replace('#^storage/#', '', $normalized),
+        ]);
+
+        foreach ($candidates as $candidate) {
+            if ($candidate && Storage::disk($this->suratDisk())->exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private function suratDisk(): string
+    {
+        return config('filesystems.surat_disk', 'public');
+    }
+
+    /**
+     * Preview file balasan (inline).
+     */
+    public function preview(SuratMasuk $surat_keluar)
+    {
         if (!$surat_keluar->file_balasan) {
             abort(404, 'File tidak ditemukan');
         }
 
-        return Storage::disk('public')->download($surat_keluar->file_balasan);
+        if (!Storage::disk('public')->exists($surat_keluar->file_balasan)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->response(
+            $surat_keluar->file_balasan,
+            basename($surat_keluar->file_balasan),
+            ['Content-Disposition' => 'inline; filename="' . basename($surat_keluar->file_balasan) . '"']
+        );
     }
 }

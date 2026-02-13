@@ -79,8 +79,8 @@ class LaporanSuratExport implements FromCollection, WithHeadings, WithMapping, S
 
         $fileSuratLabel = $surat->file_surat ? basename($surat->file_surat) : '-';
         $fileBalasanLabel = $surat->file_balasan ? basename($surat->file_balasan) : '-';
-        $fileSuratUrl = $surat->file_surat ? url('storage/' . $surat->file_surat) : null;
-        $fileBalasanUrl = $surat->file_balasan ? url('storage/' . $surat->file_balasan) : null;
+        $fileSuratUrl = $surat->file_surat ? route('surat-masuk.download', $surat->id) : null;
+        $fileBalasanUrl = $surat->file_balasan ? route('surat-keluar.download', $surat->id) : null;
 
         return [
             '', // No akan auto-generate

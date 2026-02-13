@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class SuratMasukController extends Controller
 {
@@ -47,7 +47,7 @@ class SuratMasukController extends Controller
         // Upload file PDF/DOCX
         if ($request->hasFile('file_surat')) {
             $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', 'public');
+                ->store('surat-masuk', $this->suratDisk());
         }
 
         // Data yang SIMPAN KE DB (MATCH TABEL)
@@ -112,10 +112,10 @@ class SuratMasukController extends Controller
         if ($request->hasFile('file_surat')) {
             // Hapus file lama
             if ($suratMasuk->file_surat) {
-                Storage::disk('public')->delete($suratMasuk->file_surat);
+                Storage::disk($this->suratDisk())->delete($suratMasuk->file_surat);
             }
             $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', 'public');
+                ->store('surat-masuk', $this->suratDisk());
         }
 
         // Update data
@@ -137,12 +137,12 @@ class SuratMasukController extends Controller
     {
         // Hapus file surat masuk
         if ($suratMasuk->file_surat) {
-            Storage::disk('public')->delete($suratMasuk->file_surat);
+            Storage::disk($this->suratDisk())->delete($suratMasuk->file_surat);
         }
 
         // Hapus file balasan jika ada
         if ($suratMasuk->file_balasan) {
-            Storage::disk('public')->delete($suratMasuk->file_balasan);
+            Storage::disk($this->suratDisk())->delete($suratMasuk->file_balasan);
         }
 
         $suratMasuk->delete();
@@ -156,10 +156,83 @@ class SuratMasukController extends Controller
      */
     public function download(SuratMasuk $suratMasuk)
     {
+        $filePath = $this->resolvePublicFilePath($suratMasuk->file_surat);
+        if (!$filePath) {
+            Log::warning('File surat masuk tidak ditemukan saat download.', [
+                'surat_masuk_id' => $suratMasuk->id,
+                'stored_path' => $suratMasuk->file_surat,
+            ]);
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk($this->suratDisk())->download($filePath, basename($filePath));
+    }
+
+    /**
+     * Preview file surat masuk (inline).
+     */
+    public function preview(SuratMasuk $suratMasuk)
+    {
+        $filePath = $this->resolvePublicFilePath($suratMasuk->file_surat);
+        if (!$filePath) {
+            Log::warning('File surat masuk tidak ditemukan saat preview.', [
+                'surat_masuk_id' => $suratMasuk->id,
+                'stored_path' => $suratMasuk->file_surat,
+            ]);
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk($this->suratDisk())->response(
+            $filePath,
+            basename($filePath),
+            ['Content-Disposition' => 'inline; filename="' . basename($filePath) . '"']
+        );
+    }
+
+    private function resolvePublicFilePath(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        $normalized = ltrim(str_replace('\\', '/', $path), '/');
+        $candidates = array_unique([
+            $normalized,
+            preg_replace('#^public/#', '', $normalized),
+            preg_replace('#^storage/#', '', $normalized),
+        ]);
+
+        foreach ($candidates as $candidate) {
+            if ($candidate && Storage::disk($this->suratDisk())->exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private function suratDisk(): string
+    {
+        return config('filesystems.surat_disk', 'public');
+    }
+
+    /**
+     * Preview file surat masuk (inline).
+     */
+    public function preview(SuratMasuk $suratMasuk)
+    {
         if (!$suratMasuk->file_surat) {
             abort(404, 'File tidak ditemukan');
         }
 
-        return Storage::disk('public')->download($suratMasuk->file_surat);
+        if (!Storage::disk('public')->exists($suratMasuk->file_surat)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->response(
+            $suratMasuk->file_surat,
+            basename($suratMasuk->file_surat),
+            ['Content-Disposition' => 'inline; filename="' . basename($suratMasuk->file_surat) . '"']
+        );
     }
 }
