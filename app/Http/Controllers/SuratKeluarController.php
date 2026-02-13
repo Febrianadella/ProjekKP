@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class SuratKeluarController extends Controller
 {
@@ -82,7 +84,21 @@ class SuratKeluarController extends Controller
             if ($filePath) {
                 Storage::disk($this->suratDisk())->delete($filePath);
             }
-            $filePath = $request->file('file_balasan')->store('surat-keluar', $this->suratDisk());
+
+            $storedPath = $this->storeUploadedFile(
+                $request->file('file_balasan'),
+                'surat-keluar',
+                'balasan surat keluar'
+            );
+
+            if (!$storedPath) {
+                return back()->withInput()->with(
+                    'error',
+                    'Gagal upload file balasan. Periksa konfigurasi storage server lalu coba lagi.'
+                );
+            }
+
+            $filePath = $storedPath;
         }
 
         // Handle no_surat - jika kosong atau null, gunakan nilai lama atau auto-generate
@@ -188,6 +204,54 @@ class SuratKeluarController extends Controller
 
     private function suratDisk(): string
     {
-        return config('filesystems.surat_disk', 'public');
+        $disk = config('filesystems.surat_disk', 'public');
+
+        try {
+            Storage::disk($disk);
+            return $disk;
+        } catch (Throwable $e) {
+            Log::error('Disk storage surat tidak valid. Fallback ke disk public.', [
+                'configured_disk' => $disk,
+                'error' => $e->getMessage(),
+            ]);
+
+            return 'public';
+        }
+    }
+
+    private function storeUploadedFile(UploadedFile $file, string $directory, string $context): ?string
+    {
+        $disk = $this->suratDisk();
+
+        try {
+            $path = $file->store($directory, $disk);
+        } catch (Throwable $e) {
+            Log::error('Terjadi exception saat upload file.', [
+                'context' => $context,
+                'disk' => $disk,
+                'directory' => $directory,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+
+        if (!$path) {
+            Log::error('Upload file gagal tanpa exception (path kosong/false).', [
+                'context' => $context,
+                'disk' => $disk,
+                'directory' => $directory,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+            ]);
+
+            return null;
+        }
+
+        return $path;
     }
 }

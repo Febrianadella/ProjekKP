@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class SuratMasukController extends Controller
 {
@@ -46,8 +48,20 @@ class SuratMasukController extends Controller
 
         // Upload file PDF/DOCX
         if ($request->hasFile('file_surat')) {
-            $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', $this->suratDisk());
+            $storedPath = $this->storeUploadedFile(
+                $request->file('file_surat'),
+                'surat-masuk',
+                'surat masuk'
+            );
+
+            if (!$storedPath) {
+                return back()->withInput()->with(
+                    'error',
+                    'Gagal upload file surat. Periksa konfigurasi storage server lalu coba lagi.'
+                );
+            }
+
+            $data['file_surat'] = $storedPath;
         }
 
         // Data yang SIMPAN KE DB (MATCH TABEL)
@@ -114,8 +128,21 @@ class SuratMasukController extends Controller
             if ($suratMasuk->file_surat) {
                 Storage::disk($this->suratDisk())->delete($suratMasuk->file_surat);
             }
-            $data['file_surat'] = $request->file('file_surat')
-                ->store('surat-masuk', $this->suratDisk());
+
+            $storedPath = $this->storeUploadedFile(
+                $request->file('file_surat'),
+                'surat-masuk',
+                'surat masuk'
+            );
+
+            if (!$storedPath) {
+                return back()->withInput()->with(
+                    'error',
+                    'Gagal upload file surat. Periksa konfigurasi storage server lalu coba lagi.'
+                );
+            }
+
+            $data['file_surat'] = $storedPath;
         }
 
         // Update data
@@ -213,6 +240,54 @@ class SuratMasukController extends Controller
 
     private function suratDisk(): string
     {
-        return config('filesystems.surat_disk', 'public');
+        $disk = config('filesystems.surat_disk', 'public');
+
+        try {
+            Storage::disk($disk);
+            return $disk;
+        } catch (Throwable $e) {
+            Log::error('Disk storage surat tidak valid. Fallback ke disk public.', [
+                'configured_disk' => $disk,
+                'error' => $e->getMessage(),
+            ]);
+
+            return 'public';
+        }
+    }
+
+    private function storeUploadedFile(UploadedFile $file, string $directory, string $context): ?string
+    {
+        $disk = $this->suratDisk();
+
+        try {
+            $path = $file->store($directory, $disk);
+        } catch (Throwable $e) {
+            Log::error('Terjadi exception saat upload file.', [
+                'context' => $context,
+                'disk' => $disk,
+                'directory' => $directory,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+
+        if (!$path) {
+            Log::error('Upload file gagal tanpa exception (path kosong/false).', [
+                'context' => $context,
+                'disk' => $disk,
+                'directory' => $directory,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+            ]);
+
+            return null;
+        }
+
+        return $path;
     }
 }
