@@ -249,7 +249,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </button>
 
-                                <form action="{{ route('surat-resource.destroy', $item->id) }}" method="POST"
+                                <form action="{{ route('surat-masuk.destroy', $item->id) }}" method="POST"
                                     onsubmit="return confirm('Yakin ingin menghapus surat ini?');">
                                     @csrf
                                     @method('DELETE')

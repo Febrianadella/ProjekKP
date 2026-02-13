@@ -33,8 +33,53 @@ class SuratKeluarController extends Controller
      */
     public function store(Request $request)
     {
-        // Delegate ke SuratController::storeKeluar
-        return app(SuratController::class)->storeKeluar($request);
+        Log::info('Balasan Request:', $request->all());
+
+        $data = $request->validate([
+            'surat_masuk_id'  => ['required', 'integer', 'exists:surat_masuk,id'],
+            'no_surat'        => ['nullable', 'string', 'max:255'],
+            'tanggal_surat'   => ['required', 'date'],
+            'tujuan_surat'    => ['required', 'string', 'max:255'],
+            'perihal'         => ['required', 'string'],
+            'perihal_lainnya' => ['nullable', 'string', 'max:500'],
+            'file_balasan'    => ['required', 'file', 'mimes:pdf,docx', 'max:2048'],
+        ]);
+
+        // Jika perihal adalah 'lainnya', gunakan perihal_lainnya.
+        $perihalFinal = ($data['perihal'] === 'lainnya' && !empty($data['perihal_lainnya']))
+            ? $data['perihal_lainnya']
+            : $data['perihal'];
+
+        $suratMasuk = SuratMasuk::findOrFail($data['surat_masuk_id']);
+
+        $storedPath = $this->storeUploadedFile(
+            $request->file('file_balasan'),
+            'surat-keluar',
+            'balasan surat keluar'
+        );
+
+        if (!$storedPath) {
+            return back()->withInput()->with(
+                'error',
+                'Gagal upload file balasan. Periksa konfigurasi storage server lalu coba lagi.'
+            );
+        }
+
+        $noSurat = !empty($data['no_surat'])
+            ? $data['no_surat']
+            : ($suratMasuk->no_surat_balasan ?? 'SK/' . str_pad($suratMasuk->id, 3, '0', STR_PAD_LEFT) . '/' . date('Y'));
+
+        $suratMasuk->update([
+            'no_surat_balasan' => $noSurat,
+            'tanggal_balasan'  => $data['tanggal_surat'],
+            'tujuan_surat'     => $data['tujuan_surat'],
+            'perihal_balasan'  => $perihalFinal,
+            'file_balasan'     => $storedPath,
+            'status'           => 'Sudah Dibalas',
+        ]);
+
+        return redirect()->route('surat')
+            ->with('success', 'Balasan surat keluar berhasil ditambahkan!');
     }
 
     /**
