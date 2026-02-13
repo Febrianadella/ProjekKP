@@ -169,7 +169,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('profil');
 
     Route::post('/profil', [ProfilController::class, 'update'])
-        ->middleware('can.modify')
         ->name('profil.update');
 });
 
