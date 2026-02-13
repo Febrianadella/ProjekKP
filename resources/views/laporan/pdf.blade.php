@@ -177,7 +177,7 @@
                         <div style="margin-bottom: 2px;">
                             <strong>Masuk:</strong>
                             @if ($row->file_surat)
-                                <a href="{{ asset('storage/' . $row->file_surat) }}">{{ basename($row->file_surat) }}</a>
+                                <a href="{{ route('surat-masuk.download', $row->id) }}">{{ basename($row->file_surat) }}</a>
                             @else
                                 -
                             @endif
@@ -185,8 +185,7 @@
                         <div>
                             <strong>Keluar:</strong>
                             @if ($row->file_balasan)
-                                <a
-                                    href="{{ asset('storage/' . $row->file_balasan) }}">{{ basename($row->file_balasan) }}</a>
+                                <a href="{{ route('surat-keluar.download', $row->id) }}">{{ basename($row->file_balasan) }}</a>
                             @else
                                 -
                             @endif

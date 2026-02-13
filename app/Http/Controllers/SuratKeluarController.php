@@ -137,4 +137,24 @@ class SuratKeluarController extends Controller
 
         return Storage::disk('public')->download($surat_keluar->file_balasan);
     }
+
+    /**
+     * Preview file balasan (inline).
+     */
+    public function preview(SuratMasuk $surat_keluar)
+    {
+        if (!$surat_keluar->file_balasan) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        if (!Storage::disk('public')->exists($surat_keluar->file_balasan)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->response(
+            $surat_keluar->file_balasan,
+            basename($surat_keluar->file_balasan),
+            ['Content-Disposition' => 'inline; filename="' . basename($surat_keluar->file_balasan) . '"']
+        );
+    }
 }
