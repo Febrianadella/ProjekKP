@@ -86,8 +86,8 @@ class SuratKeluarController extends Controller
         }
 
         // Handle no_surat - jika kosong atau null, gunakan nilai lama atau auto-generate
-        $noSurat = !empty($data['no_surat']) 
-            ? $data['no_surat'] 
+        $noSurat = !empty($data['no_surat'])
+            ? $data['no_surat']
             : ($surat_keluar->no_surat_balasan ?? 'SK/' . str_pad($surat_keluar->id, 3, '0', STR_PAD_LEFT) . '/' . date('Y'));
 
         $surat_keluar->update([
@@ -189,6 +189,26 @@ class SuratKeluarController extends Controller
     private function suratDisk(): string
     {
         return config('filesystems.surat_disk', 'public');
+    }
+
+    /**
+     * Preview file balasan (inline).
+     */
+    public function preview(SuratMasuk $surat_keluar)
+    {
+        if (!$surat_keluar->file_balasan) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        if (!Storage::disk('public')->exists($surat_keluar->file_balasan)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->response(
+            $surat_keluar->file_balasan,
+            basename($surat_keluar->file_balasan),
+            ['Content-Disposition' => 'inline; filename="' . basename($surat_keluar->file_balasan) . '"']
+        );
     }
 
     /**

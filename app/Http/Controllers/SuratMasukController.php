@@ -40,8 +40,8 @@ class SuratMasukController extends Controller
         ]);
 
         // Handle perihal "lainnya"
-        $perihalFinal = $data['perihal'] === 'lainnya' 
-            ? ($data['perihal_lainnya'] ?? '') 
+        $perihalFinal = $data['perihal'] === 'lainnya'
+            ? ($data['perihal_lainnya'] ?? '')
             : $data['perihal'];
 
         // Upload file PDF/DOCX
@@ -104,8 +104,8 @@ class SuratMasukController extends Controller
         ]);
 
         // Handle perihal "lainnya"
-        $perihalFinal = $data['perihal'] === 'lainnya' 
-            ? ($data['perihal_lainnya'] ?? '') 
+        $perihalFinal = $data['perihal'] === 'lainnya'
+            ? ($data['perihal_lainnya'] ?? '')
             : $data['perihal'];
 
         // Update file jika ada upload baru
@@ -214,6 +214,26 @@ class SuratMasukController extends Controller
     private function suratDisk(): string
     {
         return config('filesystems.surat_disk', 'public');
+    }
+
+    /**
+     * Preview file surat masuk (inline).
+     */
+    public function preview(SuratMasuk $suratMasuk)
+    {
+        if (!$suratMasuk->file_surat) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        if (!Storage::disk('public')->exists($suratMasuk->file_surat)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return Storage::disk('public')->response(
+            $suratMasuk->file_surat,
+            basename($suratMasuk->file_surat),
+            ['Content-Disposition' => 'inline; filename="' . basename($suratMasuk->file_surat) . '"']
+        );
     }
 
     /**
