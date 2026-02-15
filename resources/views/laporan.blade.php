@@ -24,7 +24,7 @@
                 <button type="button"
                     class="btn btn-success d-flex align-items-center justify-content-center gap-2 btn-sm w-100 w-md-auto"
                     data-bs-toggle="modal" data-bs-target="#filePreviewModal"
-                    data-preview-url=""
+                    data-preview-url="{{ route('laporan.export.excel', request()->query()) }}"
                     data-download-url="{{ route('laporan.export.excel', request()->query()) }}"
                     data-title="Export Excel" data-ext="xlsx">
                     <i class="bi bi-file-earmark-spreadsheet"></i>
@@ -274,6 +274,7 @@
                 </div>
                 <div class="modal-body">
                     <iframe id="filePreviewFrame" class="w-100 border-0 d-none" style="height:70vh;"></iframe>
+                    <div id="filePreviewHtml" class="d-none" style="max-height:70vh;overflow:auto;"></div>
                     <div id="filePreviewFallback" class="small text-muted d-none">
                         Preview untuk file ini belum didukung. Silakan download untuk melihat isinya.
                     </div>
@@ -290,24 +291,46 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var previewModal = document.getElementById('filePreviewModal');
             if (!previewModal) return;
+            var requestToken = 0;
+
+            function escapeHtml(text) {
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
 
             previewModal.addEventListener('show.bs.modal', function(event) {
+                requestToken++;
+                var currentToken = requestToken;
+
                 var trigger = event.relatedTarget;
                 if (!trigger) return;
 
                 var previewUrl = trigger.getAttribute('data-preview-url') || '';
                 var downloadUrl = trigger.getAttribute('data-download-url') || previewUrl;
+                var sourceUrl = previewUrl || downloadUrl;
                 var title = trigger.getAttribute('data-title') || 'Preview File';
                 var ext = (trigger.getAttribute('data-ext') || '').toLowerCase();
 
                 var titleEl = document.getElementById('filePreviewTitle');
                 var frame = document.getElementById('filePreviewFrame');
+                var htmlView = document.getElementById('filePreviewHtml');
                 var fallback = document.getElementById('filePreviewFallback');
                 var downloadBtn = document.getElementById('filePreviewDownload');
+
+                function showFallback(message) {
+                    fallback.textContent = message || 'Preview untuk file ini belum didukung. Silakan download untuk melihat isinya.';
+                    fallback.classList.remove('d-none');
+                }
 
                 titleEl.textContent = title;
                 downloadBtn.href = downloadUrl;
@@ -315,14 +338,123 @@
                 // Reset state
                 frame.src = '';
                 frame.classList.add('d-none');
+                htmlView.innerHTML = '';
+                htmlView.classList.add('d-none');
                 fallback.classList.add('d-none');
+                fallback.textContent = 'Preview untuk file ini belum didukung. Silakan download untuk melihat isinya.';
 
                 if (ext === 'pdf') {
                     frame.src = previewUrl;
                     frame.classList.remove('d-none');
-                } else {
-                    fallback.classList.remove('d-none');
+                    return;
                 }
+
+                if (ext === 'docx') {
+                    if (!sourceUrl) {
+                        showFallback('URL file DOCX tidak ditemukan.');
+                        return;
+                    }
+
+                    if (typeof mammoth === 'undefined') {
+                        showFallback('Library preview DOCX belum termuat. Silakan reload halaman.');
+                        return;
+                    }
+
+                    fetch(sourceUrl, {
+                            credentials: 'same-origin'
+                        })
+                        .then(function(response) {
+                            if (!response.ok) {
+                                throw new Error('Gagal mengambil file DOCX.');
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(function(arrayBuffer) {
+                            return mammoth.convertToHtml({
+                                arrayBuffer: arrayBuffer
+                            });
+                        })
+                        .then(function(result) {
+                            if (currentToken !== requestToken) return;
+
+                            var messages = (result.messages || []).map(function(item) {
+                                return '<li>' + escapeHtml(item.message || '') + '</li>';
+                            }).join('');
+
+                            var warningBlock = messages ?
+                                '<div class="alert alert-warning small mb-3"><strong>Catatan parsing:</strong><ul class="mb-0 mt-1">' +
+                                messages + '</ul></div>' :
+                                '';
+
+                            htmlView.innerHTML = warningBlock +
+                                '<div class="docx-preview">' + result.value + '</div>';
+                            htmlView.classList.remove('d-none');
+                        })
+                        .catch(function(error) {
+                            if (currentToken !== requestToken) return;
+                            showFallback('Preview DOCX gagal diproses. ' + (error.message || ''));
+                        });
+
+                    return;
+                }
+
+                if (ext === 'xlsx' || ext === 'xls') {
+                    if (!sourceUrl) {
+                        showFallback('URL file Excel tidak ditemukan.');
+                        return;
+                    }
+
+                    if (typeof XLSX === 'undefined') {
+                        showFallback('Library preview Excel belum termuat. Silakan reload halaman.');
+                        return;
+                    }
+
+                    fetch(sourceUrl, {
+                            credentials: 'same-origin'
+                        })
+                        .then(function(response) {
+                            if (!response.ok) {
+                                throw new Error('Gagal mengambil file Excel.');
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(function(arrayBuffer) {
+                            var workbook = XLSX.read(arrayBuffer, {
+                                type: 'array'
+                            });
+
+                            if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+                                throw new Error('Worksheet tidak ditemukan.');
+                            }
+
+                            var firstSheetName = workbook.SheetNames[0];
+                            var firstSheet = workbook.Sheets[firstSheetName];
+                            var tableHtml = XLSX.utils.sheet_to_html(firstSheet);
+                            var totalSheet = workbook.SheetNames.length;
+
+                            if (currentToken !== requestToken) return;
+
+                            htmlView.innerHTML =
+                                '<div class="small text-muted mb-2">Sheet: <strong>' + escapeHtml(firstSheetName) +
+                                '</strong>' + (totalSheet > 1 ? ' (menampilkan 1 dari ' + totalSheet + ' sheet)' : '') +
+                                '</div><div class="table-responsive">' + tableHtml + '</div>';
+
+                            var table = htmlView.querySelector('table');
+                            if (table) {
+                                table.classList.add('table', 'table-sm', 'table-bordered', 'align-middle');
+                            }
+
+                            htmlView.classList.remove('d-none');
+                        })
+                        .catch(function(error) {
+                            if (currentToken !== requestToken) return;
+                            showFallback('Preview Excel gagal diproses. ' + (error.message || ''));
+                        });
+
+                    return;
+                }
+
+                showFallback();
             });
         });
     </script>
