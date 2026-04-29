@@ -93,7 +93,7 @@
                                 <th>Perihal</th>
                                 <th>Tanggal Keluar</th>
                                 <th>Status</th>
-                                <th class="text-center" style="width:160px; min-width:160px;">File</th>
+                                <th class="text-center" style="width:220px; min-width:220px;">File</th>
                             </tr>
                         </thead>
                         <tbody id="laporan-body">
@@ -125,41 +125,40 @@
                                         <span class="{{ $statusClass }}">{{ $statusText }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="row g-1 justify-content-center align-items-center mx-0">
-                                            <div class="col-6 px-1">
-                                                {{-- SURAT MASUK (HIJAU) --}}
-                                                @if ($row->file_surat)
-                                                    <button type="button"
-                                                        class="btn btn-success-soft text-success rounded-circle border-0 p-1 shadow-sm file-btn"
-                                                        data-bs-toggle="modal" data-bs-target="#filePreviewModal"
-                                                        data-preview-url="{{ route('surat-masuk.preview', $row->id) }}"
-                                                        data-download-url="{{ route('surat-masuk.download', $row->id) }}"
-                                                        data-title="Preview Surat Masuk"
-                                                        data-ext="{{ strtolower(pathinfo($row->file_surat, PATHINFO_EXTENSION)) }}"
-                                                        title="Lihat Surat Masuk">
-                                                        <i class="bi bi-download fs-6"></i>
-                                                    </button>
-                                                @else
-                                                    <span class="text-muted small">-</span>
-                                                @endif
-                                            </div>
-                                            <div class="col-6 px-1">
-                                                {{-- SURAT KELUAR (MERAH) --}}
-                                                @if ($row->file_balasan)
-                                                    <button type="button"
-                                                        class="btn btn-danger-soft text-danger rounded-circle border-0 p-1 shadow-sm file-btn"
-                                                        data-bs-toggle="modal" data-bs-target="#filePreviewModal"
-                                                        data-preview-url="{{ route('surat-keluar.preview', $row->id) }}"
-                                                        data-download-url="{{ route('surat-keluar.download', $row->id) }}"
-                                                        data-title="Preview Surat Keluar"
-                                                        data-ext="{{ strtolower(pathinfo($row->file_balasan, PATHINFO_EXTENSION)) }}"
-                                                        title="Lihat Surat Keluar">
-                                                        <i class="bi bi-download fs-6"></i>
-                                                    </button>
-                                                @else
-                                                    <span class="text-muted small">-</span>
-                                                @endif
-                                            </div>
+                                        <div class="laporan-file-actions">
+                                            {{-- SURAT MASUK (HIJAU) --}}
+                                            @if ($row->file_surat)
+                                                <button type="button"
+                                                    class="btn btn-success-soft text-success rounded-3 border-0 shadow-sm file-btn file-action-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#filePreviewModal"
+                                                    data-preview-url="{{ route('surat-masuk.preview', $row->id) }}"
+                                                    data-download-url="{{ route('surat-masuk.download', $row->id) }}"
+                                                    data-title="Preview Surat Masuk"
+                                                    data-ext="{{ strtolower(pathinfo($row->file_surat, PATHINFO_EXTENSION)) }}"
+                                                    title="Lihat Surat Masuk">
+                                                    <i class="bi bi-download fs-5"></i>
+                                                    <span class="file-action-label">Download Surat Masuk</span>
+                                                </button>
+                                            @endif
+
+                                            {{-- SURAT KELUAR (MERAH) --}}
+                                            @if ($row->file_balasan)
+                                                <button type="button"
+                                                    class="btn btn-danger-soft text-danger rounded-3 border-0 shadow-sm file-btn file-action-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#filePreviewModal"
+                                                    data-preview-url="{{ route('surat-keluar.preview', $row->id) }}"
+                                                    data-download-url="{{ route('surat-keluar.download', $row->id) }}"
+                                                    data-title="Preview Surat Keluar"
+                                                    data-ext="{{ strtolower(pathinfo($row->file_balasan, PATHINFO_EXTENSION)) }}"
+                                                    title="Lihat Surat Keluar">
+                                                    <i class="bi bi-download fs-5"></i>
+                                                    <span class="file-action-label">Download Surat Keluar</span>
+                                                </button>
+                                            @endif
+
+                                            @if (!$row->file_surat && !$row->file_balasan)
+                                                <span class="text-muted small">-</span>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -217,16 +216,16 @@
                                 <div class="d-flex align-items-center gap-2 mt-3">
                                     @if ($row->file_surat)
                                         <button type="button"
-                                            class="btn btn-success-soft text-success rounded-circle border-0 p-1 shadow-sm file-btn"
+                                            class="btn btn-success-soft text-success rounded-3 border-0 shadow-sm file-btn file-action-btn"
                                             data-bs-toggle="modal" data-bs-target="#filePreviewModal"
                                             data-preview-url="{{ route('surat-masuk.preview', $row->id) }}"
                                             data-download-url="{{ route('surat-masuk.download', $row->id) }}"
                                             data-title="Preview Surat Masuk"
                                             data-ext="{{ strtolower(pathinfo($row->file_surat, PATHINFO_EXTENSION)) }}"
                                             title="Lihat Surat Masuk">
-                                            <i class="bi bi-download fs-6"></i>
+                                            <i class="bi bi-download fs-5"></i>
+                                            <span class="file-action-label">Download Surat Masuk</span>
                                         </button>
-                                        <span class="small text-muted">Surat Masuk</span>
                                     @else
                                         <span class="small text-muted">Surat Masuk: -</span>
                                     @endif
@@ -235,16 +234,16 @@
                                 <div class="d-flex align-items-center gap-2 mt-2">
                                     @if ($row->file_balasan)
                                         <button type="button"
-                                            class="btn btn-danger-soft text-danger rounded-circle border-0 p-1 shadow-sm file-btn"
+                                            class="btn btn-danger-soft text-danger rounded-3 border-0 shadow-sm file-btn file-action-btn"
                                             data-bs-toggle="modal" data-bs-target="#filePreviewModal"
                                             data-preview-url="{{ route('surat-keluar.preview', $row->id) }}"
                                             data-download-url="{{ route('surat-keluar.download', $row->id) }}"
                                             data-title="Preview Surat Keluar"
                                             data-ext="{{ strtolower(pathinfo($row->file_balasan, PATHINFO_EXTENSION)) }}"
                                             title="Lihat Surat Keluar">
-                                            <i class="bi bi-download fs-6"></i>
+                                            <i class="bi bi-download fs-5"></i>
+                                            <span class="file-action-label">Download Surat Keluar</span>
                                         </button>
-                                        <span class="small text-muted">Surat Keluar</span>
                                     @else
                                         <span class="small text-muted">Surat Keluar: -</span>
                                     @endif
@@ -289,6 +288,44 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        .laporan-file-actions {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            align-items: stretch;
+            justify-content: center;
+        }
+
+        .file-action-btn {
+            width: auto;
+            padding: .35rem .6rem;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: .4rem;
+            line-height: 1.2;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .laporan-file-actions .file-action-btn {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .file-action-label {
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            word-break: keep-all;
+            overflow-wrap: normal;
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>

@@ -265,8 +265,8 @@
         /* ====== LAPORAN + SURAT MOBILE IMPROVEMENTS ====== */
 
         .file-btn {
-            width: 28px;
-            height: 28px;
+            min-width: 28px;
+            min-height: 28px;
         }
 
         @media (max-width: 575.98px) {
@@ -302,6 +302,8 @@
             }
         }
     </style>
+
+    @stack('styles')
 </head>
 
 <body class="bg-light">
@@ -322,8 +324,8 @@
             {{-- Top logo + menu --}}
             <div class="flex-grow-1 d-flex flex-column">
                 {{-- LOGO --}}
-                <div class="d-flex align-items-center gap-2 px-4 py-3 border-bottom">
-                    <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary text-white"
+                <div class="gap-2 px-4 py-3 d-flex align-items-center border-bottom">
+                    <div class="text-white d-flex align-items-center justify-content-center rounded-3 bg-primary"
                         style="width:40px;height:40px;">
                         <i class="bi bi-envelope-fill fs-5"></i>
                     </div>
@@ -334,7 +336,7 @@
                 </div>
 
                 {{-- MENU --}}
-                <ul class="nav flex-column px-3 pt-3 pb-1 small">
+                <ul class="px-3 pt-3 pb-1 nav flex-column small">
 
                     @php
                         $baseLink = 'd-flex align-items-center gap-2 px-3 py-2 rounded-3 text-decoration-none';
@@ -343,7 +345,7 @@
 
                     {{-- Dashboard --}}
                     @php $isDashboard = request()->routeIs('dashboard'); @endphp
-                    <li class="nav-item mb-1">
+                    <li class="mb-1 nav-item">
                         <a href="{{ route('dashboard') }}"
                             class="{{ $baseLink }} {{ $isDashboard ? 'sidebar-active text-primary fw-semibold' : 'text-secondary hover-bg' }}">
                             <div class="{{ $iconBox }}"
@@ -357,7 +359,7 @@
 
                     {{-- Surat --}}
                     @php $isSurat = request()->routeIs('surat'); @endphp
-                    <li class="nav-item mb-1">
+                    <li class="mb-1 nav-item">
                         <a href="{{ route('surat') }}"
                             class="{{ $baseLink }} {{ $isSurat ? 'sidebar-active text-primary fw-semibold' : 'text-secondary hover-bg' }}">
                             <div class="{{ $iconBox }}"
@@ -370,7 +372,7 @@
 
                     {{-- Laporan --}}
                     @php $isLaporan = request()->routeIs('laporan.*'); @endphp
-                    <li class="nav-item mb-1">
+                    <li class="mb-1 nav-item">
                         <a href="{{ route('laporan.index') }}"
                             class="{{ $baseLink }} {{ $isLaporan ? 'sidebar-active text-primary fw-semibold' : 'text-secondary hover-bg' }}">
                             <div class="{{ $iconBox }}"
@@ -384,7 +386,7 @@
 
                     {{-- Profil --}}
                     @php $isProfil = request()->routeIs('profil'); @endphp
-                    <li class="nav-item mb-1">
+                    <li class="mb-1 nav-item">
                         <a href="{{ route('profil') }}"
                             class="{{ $baseLink }} {{ $isProfil ? 'sidebar-active text-primary fw-semibold' : 'text-secondary hover-bg' }}">
                             <div class="{{ $iconBox }}"
@@ -400,8 +402,8 @@
             {{-- Bottom user + logout --}}
             <div class="px-3 pb-3 small">
                 @auth
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 mb-2 rounded-4" style="background:#F3F4F6;">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-semibold"
+                    <div class="gap-2 px-3 py-2 mb-2 d-flex align-items-center rounded-4" style="background:#F3F4F6;">
+                        <div class="text-white d-flex align-items-center justify-content-center rounded-circle bg-primary fw-semibold"
                             style="width:32px;height:32px;font-size:.85rem;">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
@@ -417,7 +419,7 @@
                 <form action="{{ route('logout') }}" method="POST" class="mt-1">
                     @csrf
                     <button type="submit"
-                        class="w-100 d-flex align-items-center gap-2 px-3 py-2 rounded-3 border-0 bg-transparent text-danger">
+                        class="gap-2 px-3 py-2 bg-transparent border-0 w-100 d-flex align-items-center rounded-3 text-danger">
                         <div class="d-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10"
                             style="width:32px;height:32px;">
                             <i class="bi bi-box-arrow-right"></i>
@@ -432,21 +434,25 @@
         <div class="main-content flex-grow-1 d-flex flex-column">
 
             {{-- Topbar --}}
-            <header class="bg-white border-bottom px-3 px-md-4 py-2 d-flex justify-content-between align-items-center">
+            <header class="px-3 py-2 bg-white border-bottom px-md-4 d-flex justify-content-between align-items-center">
                 {{-- Mobile menu button --}}
                 <button class="mobile-menu-btn" onclick="toggleSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
-                <span class="text-muted small ms-auto">{{ ucfirst(Auth::user()->role ?? 'Admin') }} SIFORA</span>
+                <div class="gap-2 d-flex align-items-center ms-auto">
+                    <img src="{{ asset('storage/image/LOGO_BBPBL.png') }}" alt="Logo BBPBL" width="45"
+                        height="45" class="rounded object-fit-contain">
+                    <span class="text-muted small">{{ ucfirst(Auth::user()->role ?? 'Admin') }} SIFORA</span>
+                </div>
             </header>
 
             {{-- Content --}}
             <main class="flex-grow-1">
-                <div class="container-fluid py-3 py-md-4">
+                <div class="py-3 container-fluid py-md-4">
 
                     {{-- Flash Messages --}}
                     @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                        <div class="gap-2 mb-3 alert alert-success alert-dismissible fade show d-flex align-items-center"
                             role="alert">
                             <i class="bi bi-check-circle-fill"></i>
                             <div>{{ session('success') }}</div>
@@ -456,7 +462,7 @@
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                        <div class="gap-2 mb-3 alert alert-danger alert-dismissible fade show d-flex align-items-center"
                             role="alert">
                             <i class="bi bi-exclamation-triangle-fill"></i>
                             <div>{{ session('error') }}</div>
@@ -466,7 +472,7 @@
                     @endif
 
                     @if (session('warning'))
-                        <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                        <div class="gap-2 mb-3 alert alert-warning alert-dismissible fade show d-flex align-items-center"
                             role="alert">
                             <i class="bi bi-exclamation-circle-fill"></i>
                             <div>{{ session('warning') }}</div>
@@ -476,7 +482,7 @@
                     @endif
 
                     @if (session('info'))
-                        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
+                        <div class="gap-2 mb-3 alert alert-info alert-dismissible fade show d-flex align-items-center"
                             role="alert">
                             <i class="bi bi-info-circle-fill"></i>
                             <div>{{ session('info') }}</div>
@@ -487,8 +493,8 @@
 
                     {{-- Validation Errors --}}
                     @if ($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-                            <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="mb-3 alert alert-danger alert-dismissible fade show" role="alert">
+                            <div class="gap-2 mb-2 d-flex align-items-center">
                                 <i class="bi bi-exclamation-triangle-fill"></i>
                                 <strong>Terjadi Kesalahan:</strong>
                             </div>
